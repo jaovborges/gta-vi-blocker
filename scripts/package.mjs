@@ -7,4 +7,5 @@ for (const dir of ['background','content','data','shared','options','popup','ico
 }
 for (const name of ['manifest.json','README.md','PRIVACY.md','TESTING.md','LICENSE']) files[name] = new Uint8Array(readFileSync(name));
 files['INSTALL.txt'] = strToU8('Extraia esta pasta. No Chrome, abra chrome://extensions, ative o Modo do desenvolvedor, clique em Carregar sem compactacao e selecione a pasta com manifest.json.');
-mkdirSync('dist',{recursive:true}); const out = 'dist/gta-vi-blocker-1.0.0.zip'; writeFileSync(out,zipSync(files,{level:9})); console.log(out);
+const { version } = JSON.parse(readFileSync('manifest.json', 'utf8'));
+mkdirSync('dist',{recursive:true}); const out = `dist/gta-vi-blocker-${version}.zip`; writeFileSync(out,zipSync(files,{level:9})); console.log(out);

@@ -2,7 +2,7 @@
   const G = globalThis.GB;
   G.CARD_SELECTORS = [
     'ytd-rich-item-renderer', 'ytd-video-renderer', 'ytd-compact-video-renderer', 'ytd-grid-video-renderer', 'ytd-reel-item-renderer', 'yt-lockup-view-model', 'ytd-comment-thread-renderer', 'ytd-shorts', 'ytm-shorts-lockup-view-model',
-    '[data-testid="tweet"]', '[data-testid="cellInnerDiv"]', 'shreddit-post', 'shreddit-comment', '[data-testid="post-container"]', '.thing',
+    '[data-testid="tweet"]', 'shreddit-post', 'shreddit-comment', '[data-testid="post-container"]', '.thing',
     '[role="article"]', 'article', '[data-e2e="recommend-list-item-container"]', '[data-e2e="comment-level-1"]', '[data-e2e="search_top-item"]', '[data-e2e="feed-video"]',
     '.g', '.MjjYud .g', '.SoaBEf', '[data-news-cluster-id]', '.isv-r', '[data-ri]', '.b_algo', '.b_newsitem', '[data-testid="result"]', '.result',
     '[data-a-target="video-tower-card"]', '[data-a-target="preview-card-image-link"]', '.video-card', '.news-card', '.post', '.comment', '.card', '[data-spoiler-card]'
@@ -23,6 +23,12 @@
   };
   G.container = element => {
     if (!element || element.closest(G.SKIP)) return null;
+    // X positions and recycles the outer cell. Never hide that layout shell or
+    // insert a notice beside it: that would put the notice at the top of the feed.
+    const tweet = element.closest('[data-testid="tweet"]');
+    if (tweet) return tweet;
+    const cell = element.closest('[data-testid="cellInnerDiv"]');
+    if (cell) return cell.querySelector('[data-testid="tweet"]');
     const card = element.closest(G.CARD_SELECTORS);
     if (card && !['BODY', 'HTML', 'MAIN'].includes(card.tagName)) return card;
     const semantic = element.closest('li,figure,p');

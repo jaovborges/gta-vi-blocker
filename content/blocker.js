@@ -42,6 +42,18 @@
     }
     remove(element) { const r = this.records.get(element); if (r) { r.host.remove(); element.removeAttribute('data-gb-blocked'); this.records.delete(element); } }
     restore() { for (const [element] of this.records) this.remove(element); }
-    prune() { for (const [element, r] of this.records) if (!element.isConnected) { r.host.remove(); this.records.delete(element); } }
+    prune() {
+      for (const [element, record] of this.records) {
+        if (!element.isConnected) {
+          this.remove(element);
+          this.app.processed.delete(element);
+          this.app.video.resetContainer(element);
+          continue;
+        }
+        // Frameworks can move a card without moving its injected sibling, or
+        // remove the notice while keeping the card. Keep the pair together.
+        if (record.host.parentElement !== element.parentElement || record.host.nextSibling !== element) element.before(record.host);
+      }
+    }
   };
 })();
