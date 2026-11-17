@@ -27,6 +27,12 @@ try {
   assert.equal(await page.locator('#safe').isVisible(),true); assert.equal(await page.locator('#spoiler').isVisible(),false); ok('Manifest V3 carregado, injeção e ocultação de cards reais no Chromium');
   await page.getByRole('button',{name:'Mostrar conteúdo'}).first().click();
   assert.equal(await page.locator('#spoiler').isVisible(),true); assert.equal(await page.locator('#second').isVisible(),false);
+  await page.locator('#spoiler').evaluate(post=>{const counter=document.createElement('span');counter.textContent='2 curtidas';post.append(counter);post.setAttribute('aria-label','GTA VI atualizado');post.querySelector('img').src='/updated-thumbnail.jpg';});
+  await page.waitForTimeout(250);
+  assert.equal(await page.locator('#spoiler').isVisible(),true);
+  assert.equal(await page.locator('#second').isVisible(),false);
+  assert.equal(await page.getByRole('button',{name:'Ocultar novamente'}).count(),1);
+  ok('Mostrar conteúdo permanece liberado após contadores, miniaturas e rótulos mudarem');
   await page.getByRole('button',{name:'Ocultar novamente'}).click(); await page.locator('#spoiler[data-gb-blocked]').waitFor({state:'attached'}); ok('Revelação isolada e ocultação novamente');
   await page.evaluate(() => { const a = document.createElement('article'); a.id='dynamic'; a.textContent='侠盗猎车手6'; document.querySelector('main').append(a); });
   await page.locator('#dynamic[data-gb-blocked]').waitFor({state:'attached'}); ok('MutationObserver e dicionário chinês em conteúdo dinâmico');
@@ -46,6 +52,11 @@ try {
   assert.equal(await page.locator('#video').evaluate(v => v.paused && v.muted),true);
   await page.getByRole('button',{name:'Assistir mesmo assim'}).click();
   assert.equal(await page.locator('#video').evaluate(v => v.muted),false); ok('Vídeo HTML5 pausado e silenciado, com liberação explícita');
+  await page.locator('#video').evaluate(video=>{video.setAttribute('aria-label','GTA VI reproduzindo');Object.defineProperty(video,'currentSrc',{configurable:true,value:'blob:http://127.0.0.1/stream-initialized'});video.dispatchEvent(new Event('loadedmetadata'));video.dispatchEvent(new Event('play'));});
+  await page.waitForTimeout(250);
+  assert.equal(await page.locator('#videoCard').isVisible(),true);
+  assert.equal(await page.locator('#video').evaluate(v=>v.muted),false);
+  ok('Assistir mesmo assim prevalece sobre atualizações de streaming e eventos do player');
   const options = await context.newPage(); options.on('pageerror',e => errors.push(e.message)); await options.goto(`chrome-extension://${id}/options/options.html`);
   await options.getByText('✓ Preferências salvas neste navegador').waitFor();
   await options.screenshot({path:'test-results/options.png',fullPage:true});

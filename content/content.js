@@ -16,6 +16,11 @@
       if (this.page.host) return;
       if (!container || container === document.body || container === document.documentElement || container.closest(G.SKIP)) return;
       const text = G.extract(container);
+      if (this.blocker.isRevealed(container)) {
+        this.processed.set(container, text);
+        if (this.blocker.revealed.has(container)) this.blocker.counted.set(container, text);
+        return;
+      }
       const old = this.processed.get(container);
       if (old === text) return;
       this.processed.set(container, text);

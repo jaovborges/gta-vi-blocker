@@ -1,6 +1,6 @@
 {
   "name": "gta-vi-blocker",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "Proteção local e configurável contra spoilers de GTA VI para Chrome MV3",
   "scripts": {

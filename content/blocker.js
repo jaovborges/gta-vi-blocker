@@ -14,8 +14,27 @@
   };
   G.Blocker = class {
     constructor(app) { this.app = app; this.records = new Map(); this.revealed = new WeakMap(); this.counted = new WeakMap(); }
+    isRevealed(element) {
+      for (let owner = element; owner; owner = owner.parentElement) {
+        const release = this.revealed.get(owner);
+        if (!release) continue;
+        const identity = G.releaseIdentity(owner);
+        const identityType = value => value.startsWith('media:') ? 'media' : value.slice(0, value.lastIndexOf(':'));
+        if (release.identity && identity && identityType(release.identity) === identityType(identity) && release.identity !== identity) {
+          this.revealed.delete(owner);
+          this.remove(owner);
+          this.app.processed.delete(owner);
+          continue;
+        }
+        // Bind late-arriving metadata without treating hydration as new content.
+        if (identity && (!release.identity || !identity.startsWith('media:'))) release.identity = identity;
+        return true;
+      }
+      return false;
+    }
     block(element, result, kind = 'content', onReveal) {
       if (!element.isConnected) return;
+      if (this.isRevealed(element)) return;
       const existing = this.records.get(element);
       if (existing) {
         if (kind === 'video' && existing.kind !== 'video' && existing.hidden) this.remove(element);
@@ -23,13 +42,13 @@
       }
       if (element.parentElement?.closest('[data-gb-blocked]')) return;
       const signature = G.extract(element);
-      if (this.revealed.get(element) === signature) return;
       for (const [child] of this.records) if (element.contains(child)) this.remove(child);
       const ui = G.ui(kind === 'video' ? 'Possível spoiler de GTA VI detectado' : 'Conteúdo oculto pelo GTA VI Blocker', kind === 'video' ? 'Este vídeo foi pausado para sua proteção.' : 'Este conteúdo pode conter informações relacionadas ao GTA VI.');
       const record = { ...ui, signature, kind, onReveal, hidden: true };
       const reveal = () => {
-        this.revealed.set(element, G.extract(element));
+        this.revealed.set(element, { identity: G.releaseIdentity(element) });
         element.removeAttribute('data-gb-blocked'); record.hidden = false;
+        this.app.video.allowContainer(element);
         ui.section.replaceChildren(G.button('Ocultar novamente', () => { this.revealed.delete(element); this.remove(element); this.app.processed.delete(element); this.app.video.resetContainer(element); this.app.inspect(element); }));
         onReveal?.();
       };

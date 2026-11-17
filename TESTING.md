@@ -1,12 +1,13 @@
-# Verificação da versão 1.0.1
+# Verificação da versão 1.0.2
 
 Validação local em 16/11/2026, Windows, Node 24.21.0, Chromium 141.0.7390.37 (perfil isolado Playwright).
 
 ## Automatizado
 
 - `npm test`: suíte Vitest/JSDOM de detecção, Unicode, 18 conjuntos linguísticos, sensibilidade, regras, DOM, mutações, revelação, pausa, sites, páginas, vídeos, backup e persistência. Inclui regressões de player adicionado após bloqueio de card e reocultação sem afetar outros vídeos.
-- `npm run test:e2e`: 17 verificações com a extensão efetivamente instalada no Chromium: injeção, ocultação, revelação, mutações, pausa e alarme real, sites permitidos, SPA, vídeo HTML5, criação/edição pela interface, idiomas, popup, estatísticas, feed virtualizado com estrutura do X e reinício do navegador. Nenhum erro JavaScript nas páginas e interfaces monitoradas.
+- `npm run test:e2e`: 19 verificações com a extensão efetivamente instalada no Chromium: injeção, ocultação, revelação, mutações, pausa e alarme real, sites permitidos, SPA, vídeo HTML5, criação/edição pela interface, idiomas, popup, estatísticas, feed virtualizado com estrutura do X e reinício do navegador. Nenhum erro JavaScript nas páginas e interfaces monitoradas.
 - Regressão X/Twitter: 6 testes de DOM cobrem a seleção do tweet sem ocultar sua célula de layout, revelação/reocultação, mudança de pai, recuperação de aviso removido, descarte de post e reciclagem de texto. A integração Chromium mede as coordenadas do aviso antes e depois de mover uma célula por `transform`, verifica que posts normais continuam visíveis e que avisos acompanham a troca de contêiner e desaparecem ao remover o tweet. O feed é uma fixture local representativa; não valida todas as variantes autenticadas do X.
+- Regressão de liberação: 10 testes adicionais verificam atualizações após o clique, estabilidade sob MutationObserver, filhos adicionados, troca de player, restauração do áudio e novos identificadores de conteúdo. A integração Chromium altera texto, miniatura e rótulos de um card revelado e dispara eventos de metadados/play com um `currentSrc` de streaming após liberar o vídeo, confirmando que a ocultação e o mute não são reaplicados.
 - `npm run check`: Manifest V3, existência de recursos, HTML sem scripts inline e sintaxe JavaScript.
 - `npm run package`: ZIP de instalação contendo somente arquivos de produção e documentação.
 - `npm audit`: nenhuma vulnerabilidade reportada no conjunto de dependências instalado durante a validação.

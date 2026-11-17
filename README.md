@@ -40,6 +40,8 @@ Em **Palavras-chave**, adicione termos exclusivos com a regra **Bloquear sempre*
 
 Em **Vídeos**, avisos e liberação individual podem ser desativados. Se os avisos estiverem desativados, ou o estilo for ocultação completa, o conteúdo não terá um botão de revelação: pause a extensão, permita o domínio ou altere o estilo para vê-lo. Desativar a proteção preventiva mantém a filtragem comum de cards, inclusive cards que contenham vídeos.
 
+Depois de **Mostrar conteúdo** ou **Assistir mesmo assim**, atualizações de contadores, miniaturas, rótulos e metadados não cancelam sua escolha. Identificadores estáveis permitem voltar a proteger um contêiner reutilizado para outro post ou vídeo. Sem identificador disponível, a liberação permanece válida para aquele elemento até **Ocultar novamente**, recarregar a página ou mudar a rota. A liberação não é uma permissão para outros cards.
+
 Ao permitir um domínio pai com subdomínios, reativar a proteção pelo popup de um subdomínio remove a regra pai correspondente. Se desejar exceções mais específicas, cadastre domínios exatos na página de opções.
 
 ## Estrutura
@@ -75,9 +77,9 @@ npm run test:e2e
 npm run package
 ```
 
-O teste de integração inicia um perfil Chromium temporário e isolado com a extensão real carregada, usa uma página HTTP local e reinicia o navegador para conferir persistência. Capturas ficam em `test-results/`. O ZIP instalável fica em `dist/gta-vi-blocker-1.0.1.zip`, sem dependências de desenvolvimento. O workflow também disponibiliza esse ZIP como artefato.
+O teste de integração inicia um perfil Chromium temporário e isolado com a extensão real carregada, usa uma página HTTP local e reinicia o navegador para conferir persistência. Capturas ficam em `test-results/`. O ZIP instalável fica em `dist/gta-vi-blocker-1.0.2.zip`, sem dependências de desenvolvimento. O workflow também disponibiliza esse ZIP como artefato.
 
-Validação da versão 1.0.1: **60 testes automatizados e 17 verificações de integração passaram**. Veja [TESTING.md](TESTING.md) para ambiente, escopo, página pública verificada e limitações da validação.
+Validação da versão 1.0.2: **70 testes automatizados e 19 verificações de integração passaram**. Veja [TESTING.md](TESTING.md) para ambiente, escopo, página pública verificada e limitações da validação.
 
 Para regenerar os dicionários e o manifest/HTML após editar os respectivos geradores: `node scripts/dictionaries.mjs` e `node scripts/scaffold.mjs`. Os ícones podem ser regenerados no Windows com `powershell -File scripts/icons.ps1`.
 

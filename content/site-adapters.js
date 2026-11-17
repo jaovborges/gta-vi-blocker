@@ -21,6 +21,45 @@
     }
     return parts.join(' ').slice(0, 30000);
   };
+  // A release belongs to a piece of content, not its changing counters, labels,
+  // thumbnail URLs or streaming metadata. Only stable IDs can revoke it.
+  G.releaseIdentity = element => {
+    for (const name of ['data-post-id', 'data-video-id', 'data-item-id', 'video-id']) {
+      const id = element.getAttribute(name);
+      if (id) return name + ':' + id;
+    }
+    for (const link of element.querySelectorAll('a[href]')) {
+      let url; try { url = new URL(link.getAttribute('href'), location.href); } catch { continue; }
+      const host = url.hostname;
+      if (/(^|\.)(x\.com|twitter\.com)$/.test(host)) {
+        const id = url.pathname.match(/\/status\/(\d+)/)?.[1];
+        if (id) return 'post:x:' + id;
+      }
+      if (/(^|\.)(youtube\.com|youtu\.be)$/.test(host)) {
+        const id = url.searchParams.get('v') || url.pathname.match(/\/shorts\/([^/]+)/)?.[1] || (host === 'youtu.be' ? url.pathname.slice(1) : null);
+        if (id) return 'video:youtube:' + id;
+      }
+      if (/(^|\.)reddit\.com$/.test(host)) {
+        const id = url.pathname.match(/\/comments\/([^/]+)/)?.[1];
+        if (id) return 'post:reddit:' + id;
+      }
+      if (/(^|\.)instagram\.com$/.test(host)) {
+        const id = url.pathname.match(/\/(p|reel)\/([^/]+)/)?.[2];
+        if (id) return 'post:instagram:' + id;
+      }
+    }
+    const video = element.matches('video') ? element : element.querySelector('video');
+    const source = video?.getAttribute('src') || video?.querySelector('source[src]')?.getAttribute('src');
+    if (source) {
+      try {
+        const url = new URL(source, location.href);
+        // blob URLs and currentSrc may change when a player initializes or
+        // switches quality. They do not identify a new video.
+        if (['http:', 'https:'].includes(url.protocol)) return 'media:' + url.origin + url.pathname;
+      } catch { /* No stable media identity is available. */ }
+    }
+    return null;
+  };
   G.container = element => {
     if (!element || element.closest(G.SKIP)) return null;
     // X positions and recycles the outer cell. Never hide that layout shell or
