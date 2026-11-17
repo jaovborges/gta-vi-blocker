@@ -5,11 +5,12 @@
     const host = document.createElement('div'); host.dataset.gbUi = '';
     const shadow = host.attachShadow({ mode: 'open' });
     const style = document.createElement('style');
-    style.textContent = ':host{display:block!important;position:relative;z-index:2147483646;color-scheme:dark;font:13px/1.5 system-ui!important}section{box-sizing:border-box;background:#151b25;color:#e9eef8;border:1px solid #384456;border-left:3px solid #64efbe;border-radius:12px;padding:16px;margin:8px 0;text-align:left}strong{display:block;font-size:14px}p{color:#aeb9cb;margin:5px 0 12px}button{font:600 12px system-ui;background:#64efbe;color:#08221a;border:0;border-radius:7px;padding:9px 12px;cursor:pointer;margin:3px 6px 3px 0}button:hover{filter:brightness(1.1)}button:focus-visible{outline:3px solid #fff;outline-offset:2px}';
+    style.textContent = ':host{display:block!important;position:relative;z-index:2147483646;color-scheme:dark;font:13px/1.5 system-ui!important}:host([hidden]){display:none!important}section{box-sizing:border-box;background:linear-gradient(115deg,#30203b,#1d172d 75%);color:#fff4f8;border:1px solid #75516d;border-left:3px solid #ff90c2;border-radius:12px;padding:16px;margin:8px 0;text-align:left;box-shadow:0 4px 20px #170e2420}.label{display:block;color:#75e9df;font:700 9px/1.5 system-ui;letter-spacing:1.6px;margin-bottom:8px}strong{display:block;font-size:14px}p{color:#c9b8d2;margin:5px 0 12px}button{font:600 12px system-ui;background:linear-gradient(110deg,#ff94c8,#ffb4b5);color:#301330;border:1px solid #ffc0d4;border-radius:7px;padding:8px 12px;cursor:pointer;margin:3px 6px 3px 0}button:hover{filter:brightness(1.1)}button:focus-visible{outline:3px solid #75e9df;outline-offset:2px}';
     const section = document.createElement('section');
     const strong = document.createElement('strong'); strong.textContent = title;
     const p = document.createElement('p'); p.textContent = description;
-    section.append(strong, p); shadow.append(style, section);
+    const label = document.createElement('span'); label.className = 'label'; label.textContent = 'VI / ÁREA PROTEGIDA';
+    section.append(label, strong, p); shadow.append(style, section);
     return { host, section };
   };
   G.Blocker = class {

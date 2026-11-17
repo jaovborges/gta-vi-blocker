@@ -1,4 +1,4 @@
-# Verificação da versão 1.0.2
+# Verificação da versão 1.1.0
 
 Validação local em 16/11/2026, Windows, Node 24.21.0, Chromium 141.0.7390.37 (perfil isolado Playwright).
 
@@ -20,6 +20,8 @@ O teste de vídeo do navegador usa um elemento HTML5 sem mídia externa; verific
 - Busca Google por GTA VI: a conexão retornou uma página intermediária de verificação do Google. A proteção de página foi acionada pelo endereço/título. Isso **não valida a cobertura dos cards da página normal de resultados**.
 
 As capturas do popup e das configurações foram renderizadas no Chromium e inspecionadas visualmente. Não foram feitos testes autenticados em Instagram, Facebook, TikTok, X, Twitch ou Reddit. Os seletores desses serviços existem, mas sua cobertura completa não é certificada por este relatório.
+
+Na versão 1.1.0, o tema Vice City foi revisado nas seções de configurações em desktop, no popup, no aviso de conteúdo e em uma tela de 390 px, sem overflow horizontal nas configurações. `node scripts/preview.mjs` gera essas capturas em `test-results/` e verifica erros JavaScript durante a navegação das telas.
 
 ## Roteiro manual complementar
 

@@ -17,7 +17,7 @@
       if (score < 4) { this.restore(); return; }
       if (this.host) return;
       const ui = G.ui('Página bloqueada pelo GTA VI Blocker', 'Detectamos conteúdo potencialmente relacionado ao GTA VI nesta página.');
-      ui.host.style.cssText = 'position:fixed!important;inset:0!important;z-index:2147483647!important;background:#0b101b!important;display:grid!important;place-items:center!important;padding:24px!important;';
+      ui.host.style.cssText = 'position:fixed!important;inset:0!important;z-index:2147483647!important;background:radial-gradient(ellipse at 70% 10%,#59304e,#1e142f 50%,#120e20 85%)!important;display:grid!important;place-items:center!important;padding:24px!important;';
       ui.section.style.maxWidth = '520px';
       ui.section.append(G.button('Voltar', () => history.back()), G.button('Liberar esta página temporariamente', () => { this.released = true; this.restore(); this.app.blocker.restore(); this.app.video.restore(); this.app.pageReleased = true; }), G.button('Desativar proteção neste site', async () => { await G.message({ type: 'ALLOW_SITE', domain: location.hostname, subdomains: false }); }));
       document.documentElement.append(ui.host); document.documentElement.setAttribute('data-gb-page-covered', ''); this.host = ui.host;
