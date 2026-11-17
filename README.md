@@ -2,6 +2,8 @@
 
 Extensão Chrome Manifest V3 para reduzir a exposição involuntária a notícias e spoilers de Grand Theft Auto VI. JavaScript, HTML e CSS, sem frameworks de produção, servidores ou rastreadores.
 
+![Painel de configurações do GTA VI Blocker](docs/options.png)
+
 ## Instalação no Chrome
 
 1. Baixe o ZIP da release e **extraia** em uma pasta permanente, ou clone este repositório.
@@ -74,6 +76,8 @@ npm run package
 ```
 
 O teste de integração inicia um perfil Chromium temporário e isolado com a extensão real carregada, usa uma página HTTP local e reinicia o navegador para conferir persistência. Capturas ficam em `test-results/`. O ZIP instalável fica em `dist/gta-vi-blocker-1.0.0.zip`, sem dependências de desenvolvimento. O workflow também disponibiliza esse ZIP como artefato.
+
+Validação da versão 1.0.0: **54 testes automatizados e 14 verificações de integração passaram**. Veja [TESTING.md](TESTING.md) para ambiente, escopo, página pública verificada e limitações da validação.
 
 Para regenerar os dicionários e o manifest/HTML após editar os respectivos geradores: `node scripts/dictionaries.mjs` e `node scripts/scaffold.mjs`. Os ícones podem ser regenerados no Windows com `powershell -File scripts/icons.ps1`.
 
