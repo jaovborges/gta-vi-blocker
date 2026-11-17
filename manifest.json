@@ -1,0 +1,84 @@
+{
+  "manifest_version": 3,
+  "name": "GTA VI Blocker",
+  "version": "1.0.0",
+  "minimum_chrome_version": "120",
+  "description": "Proteção local contra spoilers de GTA VI. Filtragem multilíngue, avisos de vídeo e controle por site.",
+  "permissions": [
+    "storage",
+    "alarms",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "background/service-worker.js"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "GTA VI Blocker",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "options_page": "options/options.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "shared/constants.js",
+        "shared/normalization.js",
+        "data/characters.js",
+        "data/keywords.js",
+        "data/languages/en.js",
+        "data/languages/de.js",
+        "data/languages/ar.js",
+        "data/languages/zh-cn.js",
+        "data/languages/zh-tw.js",
+        "data/languages/id.js",
+        "data/languages/nl.js",
+        "data/languages/fr.js",
+        "data/languages/es.js",
+        "data/languages/it.js",
+        "data/languages/ja.js",
+        "data/languages/ko.js",
+        "data/languages/pl.js",
+        "data/languages/pt-br.js",
+        "data/languages/ru.js",
+        "data/languages/th.js",
+        "data/languages/tr.js",
+        "data/languages/vi.js",
+        "shared/settings.js",
+        "shared/storage.js",
+        "content/detector.js",
+        "content/site-adapters.js",
+        "content/blocker.js",
+        "content/video-guard.js",
+        "content/page-guard.js",
+        "content/observer.js",
+        "content/content.js"
+      ],
+      "css": [
+        "content/content.css"
+      ],
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'"
+  }
+}
