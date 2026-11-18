@@ -9,7 +9,7 @@
     isActive() { return G.active(this.settings) && !G.isAllowed(location.hostname, this.settings.allowedSites) && !this.pageReleased; }
     count(category, video) { this.currentCount++; G.message({ type: 'BLOCK', category, video }); }
     inspect(element) {
-      if (!this.isActive() || element.closest(G.SKIP)) return;
+      if (!this.isActive() || element.closest(G.SKIP) || G.isYouTubePlaybackContent(element)) return;
       const container = G.container(element);
       if (element.matches('video')) this.video.inspect(element);
       else if (container) for (const video of container.querySelectorAll('video')) this.video.inspect(video);
@@ -25,8 +25,12 @@
       if (old === text) return;
       this.processed.set(container, text);
       const record = this.blocker.records.get(container);
-      if (record && record.signature !== text) this.blocker.remove(container);
       const result = this.detector.analyze(text);
+      if (record?.preview && record.hidden && result.blocked && record.identity === G.releaseIdentity(container)) {
+        record.signature = text; this.blocker.counted.set(container, text);
+        this.blocker.refreshPreview(container, record); return;
+      }
+      if (record && record.signature !== text) this.blocker.remove(container);
       if (result.blocked) this.blocker.block(container, result);
     }
     update(settings) {

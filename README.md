@@ -42,6 +42,8 @@ Em **Palavras-chave**, adicione termos exclusivos com a regra **Bloquear sempre*
 
 Em **Vídeos**, avisos e liberação individual podem ser desativados. Se os avisos estiverem desativados, ou o estilo for ocultação completa, o conteúdo não terá um botão de revelação: pause a extensão, permita o domínio ou altere o estilo para vê-lo. Desativar a proteção preventiva mantém a filtragem comum de cards, inclusive cards que contenham vídeos.
 
+**No YouTube, a proteção atua nas listas e recomendações.** O aviso cobre a miniatura e exibe o nome do canal, quando esse dado está disponível no card; títulos suspeitos também ficam ocultos. “Mostrar conteúdo” revela somente aquele card. Ao abrir um vídeo, o player principal e seus metadados ficam livres, e os vídeos recomendados continuam sendo filtrados. O YouTube não usa a tela de bloqueio de página inteira, inclusive nas buscas. Esse comportamento é específico do YouTube; nos outros sites, a proteção preventiva de vídeos permanece disponível.
+
 Depois de **Mostrar conteúdo** ou **Assistir mesmo assim**, atualizações de contadores, miniaturas, rótulos e metadados não cancelam sua escolha. Identificadores estáveis permitem voltar a proteger um contêiner reutilizado para outro post ou vídeo. Sem identificador disponível, a liberação permanece válida para aquele elemento até **Ocultar novamente**, recarregar a página ou mudar a rota. A liberação não é uma permissão para outros cards.
 
 Ao permitir um domínio pai com subdomínios, reativar a proteção pelo popup de um subdomínio remove a regra pai correspondente. Se desejar exceções mais específicas, cadastre domínios exatos na página de opções.
@@ -79,9 +81,9 @@ npm run test:e2e
 npm run package
 ```
 
-O teste de integração inicia um perfil Chromium temporário e isolado com a extensão real carregada, usa uma página HTTP local e reinicia o navegador para conferir persistência. Capturas ficam em `test-results/`. O ZIP instalável fica em `dist/gta-vi-blocker-1.1.0.zip`, sem dependências de desenvolvimento. O workflow também disponibiliza esse ZIP como artefato.
+O teste de integração inicia um perfil Chromium temporário e isolado com a extensão real carregada, usa uma página HTTP local e reinicia o navegador para conferir persistência. Capturas ficam em `test-results/`. O ZIP instalável fica em `dist/gta-vi-blocker-1.2.0.zip`, sem dependências de desenvolvimento. O workflow também disponibiliza esse ZIP como artefato.
 
-Validação da versão 1.1.0: **70 testes automatizados e 19 verificações de integração passaram**. Veja [TESTING.md](TESTING.md) para ambiente, escopo, página pública verificada e limitações da validação.
+Validação da versão 1.2.0: **85 testes automatizados e 23 verificações de integração passaram**. Veja [TESTING.md](TESTING.md) para ambiente, escopo, página pública verificada e limitações da validação.
 
 Para regenerar os dicionários e o manifest/HTML após editar os respectivos geradores: `node scripts/dictionaries.mjs` e `node scripts/scaffold.mjs`. Os ícones podem ser regenerados no Windows com `powershell -File scripts/icons.ps1`.
 

@@ -5,6 +5,7 @@
       this.app = app; this.states = new Map();
       this.onPlay = event => {
         if (!(event.target instanceof HTMLVideoElement) || !app.isActive() || !app.settings.videoGuard) return;
+        if (G.isYouTubePlaybackContent(event.target)) { this.inspect(event.target); return; }
         if (app.settings.autoplay) this.inspect(event.target);
         const state = this.states.get(event.target);
         if (state?.blocked) { event.target.muted = true; event.target.pause(); }
@@ -15,7 +16,14 @@
     inspect(video) {
       const app = this.app;
       if (!app.isActive() || !app.settings.videoGuard) return;
-      const container = video.closest('ytd-watch-flexy')?.querySelector('#player') || G.container(video) || video;
+      // YouTube protection is limited to lists/recommendations. Opening a video
+      // is an intentional choice; its primary player stays available.
+      if (G.isYouTubePlaybackContent(video)) {
+        const previous = this.states.get(video);
+        if (previous) { this.release(video, previous); app.blocker.remove(previous.container); this.states.delete(video); }
+        return;
+      }
+      const container = G.container(video) || video;
       // Check the explicit decision before inspecting mutable player metadata.
       // Includes ancestor cards, so a recreated player inherits that card's release.
       if (app.blocker.isRevealed(video) || app.blocker.isRevealed(container)) {
@@ -25,7 +33,6 @@
       }
       let text = G.extract(container);
       if (app.page.host) text += ' ' + document.title;
-      if (location.hostname.includes('youtube.com') && location.pathname === '/watch') text += ' ' + document.title + ' ' + (document.querySelector('ytd-watch-metadata h1')?.textContent || '') + ' ' + (document.querySelector('meta[name="description"]')?.content || '');
       const signature = location.href + '|' + (G.releaseIdentity(container) || '') + '|' + (video.currentSrc || video.src) + '|' + G.normalize(text);
       const previous = this.states.get(video);
       if (previous?.signature === signature) return;

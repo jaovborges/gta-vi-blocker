@@ -1,2 +1,4 @@
-[data-gb-blocked] { display: none !important; }
+[data-gb-blocked]:not([data-gb-preview-blocked]) { display: none !important; }
+[data-gb-preview-blocked], [data-gb-preview-blocked] :not([data-gb-ui]) { visibility: hidden !important; }
+[data-gb-preview-position] { position: relative !important; }
 [data-gb-page-covered] { overflow: hidden !important; }

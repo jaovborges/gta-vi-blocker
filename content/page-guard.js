@@ -3,7 +3,7 @@
   G.PageGuard = class {
     constructor(app) { this.app = app; this.host = null; this.released = false; this.counted = false; }
     inspect() {
-      if (window.top !== window || this.released || !this.app.isActive() || !this.app.settings.pageGuard) { this.restore(); return; }
+      if (window.top !== window || this.released || !this.app.isActive() || !this.app.settings.pageGuard || G.isYouTube()) { this.restore(); return; }
       const detector = this.app.detector;
       let url; try { url = decodeURIComponent(location.pathname + location.search); } catch { url = location.pathname; }
       const title = detector.analyze(document.title);

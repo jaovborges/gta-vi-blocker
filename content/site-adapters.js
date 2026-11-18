@@ -1,5 +1,23 @@
 (() => {
   const G = globalThis.GB;
+  G.YOUTUBE_CARDS = 'ytd-rich-item-renderer,ytd-rich-grid-media,ytd-video-renderer,ytd-compact-video-renderer,ytd-grid-video-renderer,ytd-reel-item-renderer,yt-lockup-view-model,.yt-lockup-view-model,ytm-shorts-lockup-view-model';
+  G.isYouTube = () => /(^|\.)youtube\.com$/.test(location.hostname);
+  G.isYouTubePlaybackPage = () => G.isYouTube() && (location.pathname === '/watch' || location.pathname.startsWith('/shorts/'));
+  G.isYouTubePlaybackContent = element => {
+    if (!G.isYouTubePlaybackPage() || element.closest(G.YOUTUBE_CARDS)) return false;
+    if (element.closest('#movie_player,ytd-watch-flexy #primary,ytd-watch-grid #primary,ytd-watch-flexy #player,ytd-watch-grid #player,ytd-watch-flexy #player-container-outer,ytd-watch-metadata,ytd-video-primary-info-renderer,ytd-video-secondary-info-renderer,ytd-reel-video-renderer,ytd-shorts')) return true;
+    // Do not let generic container detection hide an ancestor of the primary
+    // player. Recommendation cards inside that shell are still handled above.
+    return !!(element.closest('ytd-watch-flexy,ytd-watch-grid') && element.querySelector('#movie_player'));
+  };
+  G.youtubePreview = card => {
+    if (!card.matches(G.YOUTUBE_CARDS)) return null;
+    const anchor = card.querySelector('ytd-thumbnail,#thumbnail,.yt-lockup-view-model__content-image,.shortsLockupViewModelHostThumbnailContainer,.ytm-shorts-lockup-view-model__thumbnail-container') || card.querySelector('a[href*="/watch"],a[href*="/shorts/"]');
+    if (!anchor || anchor.matches('img,video') || !anchor.querySelector('img,video,yt-image')) return null;
+    const channel = card.querySelector('ytd-channel-name #text,#channel-name #text,#channel-name a,ytd-channel-name a,a[href^="/@"],a[href*="youtube.com/@"],a[href^="/channel/"],a[href^="/c/"],a[href^="/user/"]') || card.querySelector('.yt-content-metadata-view-model__metadata-row .yt-content-metadata-view-model__metadata-text');
+    const channelName = channel?.textContent?.replace(/\s+/g, ' ').trim() || channel?.getAttribute('title') || null;
+    return { anchor, channelName };
+  };
   G.CARD_SELECTORS = [
     'ytd-rich-item-renderer', 'ytd-video-renderer', 'ytd-compact-video-renderer', 'ytd-grid-video-renderer', 'ytd-reel-item-renderer', 'yt-lockup-view-model', 'ytd-comment-thread-renderer', 'ytd-shorts', 'ytm-shorts-lockup-view-model',
     '[data-testid="tweet"]', 'shreddit-post', 'shreddit-comment', '[data-testid="post-container"]', '.thing',
@@ -62,6 +80,9 @@
   };
   G.container = element => {
     if (!element || element.closest(G.SKIP)) return null;
+    if (G.isYouTubePlaybackContent(element)) return null;
+    const youtubeCard = element.closest('ytd-rich-item-renderer') || element.closest(G.YOUTUBE_CARDS);
+    if (youtubeCard) return youtubeCard;
     // X positions and recycles the outer cell. Never hide that layout shell or
     // insert a notice beside it: that would put the notice at the top of the feed.
     const tweet = element.closest('[data-testid="tweet"]');
