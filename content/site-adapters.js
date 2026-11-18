@@ -2,6 +2,8 @@
   const G = globalThis.GB;
   G.YOUTUBE_CARDS = 'ytd-rich-item-renderer,ytd-rich-grid-media,ytd-video-renderer,ytd-compact-video-renderer,ytd-grid-video-renderer,ytd-reel-item-renderer,yt-lockup-view-model,.yt-lockup-view-model,ytm-shorts-lockup-view-model';
   G.isYouTube = () => /(^|\.)youtube\.com$/.test(location.hostname);
+  G.YOUTUBE_SEARCH_UI = 'ytd-searchbox,yt-searchbox,yt-searchbox-desktop,yt-searchbox-desktop-renderer,yt-searchbox-legacy,ytd-masthead,.ytSearchboxComponentHost,.ytSearchboxComponentSuggestionsContainer,.ytSuggestionComponentHost,.gstl_50,.gssb_c,[role="option"]';
+  G.isYouTubeSearchUI = element => G.isYouTube() && (!!element.closest(G.YOUTUBE_SEARCH_UI + ',form,[role="search"],[role="combobox"],[role="listbox"]') || !!element.querySelector('input[name="search_query"],input#search,ytd-searchbox,yt-searchbox,yt-searchbox-desktop,yt-searchbox-desktop-renderer,.ytSearchboxComponentHost'));
   G.isYouTubePlaybackPage = () => G.isYouTube() && (location.pathname === '/watch' || location.pathname.startsWith('/shorts/'));
   G.isYouTubePlaybackContent = element => {
     if (!G.isYouTubePlaybackPage() || element.closest(G.YOUTUBE_CARDS)) return false;
@@ -25,7 +27,7 @@
     '.g', '.MjjYud .g', '.SoaBEf', '[data-news-cluster-id]', '.isv-r', '[data-ri]', '.b_algo', '.b_newsitem', '[data-testid="result"]', '.result',
     '[data-a-target="video-tower-card"]', '[data-a-target="preview-card-image-link"]', '.video-card', '.news-card', '.post', '.comment', '.card', '[data-spoiler-card]'
   ].join(',');
-  G.SKIP = 'script,style,noscript,template,nav,header,footer,input,textarea,select,button,[contenteditable]:not([contenteditable="false"]),[data-gb-ui]';
+  G.SKIP = 'script,style,noscript,template,nav,header,footer,form,input,textarea,select,button,[role="search"],[role="combobox"],[role="listbox"],[contenteditable]:not([contenteditable="false"]),[data-gb-ui]' + (G.isYouTube() ? ',' + G.YOUTUBE_SEARCH_UI : '');
   G.extract = element => {
     const parts = [];
     // Read bounded text nodes, excluding editable areas and injected UI.
@@ -33,9 +35,12 @@
     let n, count = 0, length = 0;
     while ((n = walker.nextNode()) && count++ < 500 && length < 24000) { parts.push(n.nodeValue); length += n.nodeValue.length; }
     const nodes = [element, ...element.querySelectorAll('a[href],img,video,[title],[aria-label]')].slice(0, 180);
-    for (const node of nodes) for (const key of ['alt', 'title', 'aria-label', 'href', 'src', 'poster']) {
-      const v = node.getAttribute(key);
-      if (v) { try { parts.push(decodeURIComponent(v)); } catch { parts.push(v); } }
+    for (const node of nodes) {
+      if (node.closest(G.SKIP)) continue;
+      for (const key of ['alt', 'title', 'aria-label', 'href', 'src', 'poster']) {
+        const v = node.getAttribute(key);
+        if (v) { try { parts.push(decodeURIComponent(v)); } catch { parts.push(v); } }
+      }
     }
     return parts.join(' ').slice(0, 30000);
   };
@@ -79,7 +84,7 @@
     return null;
   };
   G.container = element => {
-    if (!element || element.closest(G.SKIP)) return null;
+    if (!element || element.closest(G.SKIP) || G.isYouTubeSearchUI(element)) return null;
     if (G.isYouTubePlaybackContent(element)) return null;
     const youtubeCard = element.closest('ytd-rich-item-renderer') || element.closest(G.YOUTUBE_CARDS);
     if (youtubeCard) return youtubeCard;

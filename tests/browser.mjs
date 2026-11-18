@@ -20,6 +20,18 @@ try {
   const id = new URL(worker.url()).host;
   await worker.evaluate(async () => { await GB.save(GB.defaultSettings()); await chrome.storage.local.set({stats:GB.emptyStats()}); });
   const errors = [];
+  await context.route(/^https:\/\/(?:[\w-]+\.)?github\.com\//, route=>route.fulfill({contentType:'text/html; charset=utf-8',body:fixture}));
+  const github=await context.newPage(); github.on('pageerror',e=>errors.push(e.message));
+  for (const host of ['github.com','gist.github.com']) {
+    await github.goto(`https://${host}/jaovborges/gta-vi-blocker`);
+    const status=await worker.evaluate(async hostname=>{
+      const [tab]=await chrome.tabs.query({url:`https://${hostname}/*`});
+      for(let attempt=0;attempt<30;attempt++) { try { const result=await chrome.tabs.sendMessage(tab.id,{type:'STATUS'}); if(result) return result; } catch {} await new Promise(r=>setTimeout(r,50)); }
+      throw new Error('Content script do GitHub não iniciou.');
+    },host);
+    assert.equal(status.active,false); assert.equal(await github.locator('#spoiler').isVisible(),true); assert.equal(await github.locator('[data-gb-ui]').count(),0);
+  }
+  await github.close(); ok('GitHub e subdomínios ficam liberados por padrão, mesmo em páginas sobre GTA VI');
   const page = await context.newPage(); page.on('pageerror',e => errors.push(e.message));
   await page.goto(base);
   await page.locator('#spoiler[data-gb-blocked]').waitFor({state:'attached'});
@@ -137,6 +149,23 @@ try {
   assert.equal(await youtube.locator('#opened-video').evaluate(v=>v.muted),false);
   await youtube.locator('#recommended ytd-thumbnail [data-gb-preview-overlay]').waitFor();
   ok('YouTube: navegação SPA mantém o player livre e as listas protegidas');
+  await youtube.evaluate(()=>{
+    const box=document.createElement('yt-searchbox'); box.id='test-searchbox';
+    const form=document.createElement('form'); form.action='/results'; form.setAttribute('role','search');
+    const input=document.createElement('input'); input.id='test-search'; input.name='search_query'; input.setAttribute('aria-label','GTA VI');
+    const suggestions=document.createElement('div'); suggestions.id='test-suggestions'; suggestions.setAttribute('role','listbox');
+    const option=document.createElement('a'); option.setAttribute('role','option'); suggestions.append(option);
+    input.addEventListener('input',()=>{option.textContent=input.value+' trailer';option.href='/results?search_query='+encodeURIComponent(input.value);box.setAttribute('aria-label',input.value);});
+    form.append(input);box.append(form,suggestions);document.body.prepend(box);
+  });
+  const search=youtube.locator('#test-search'); await search.fill('GTA VI'); await search.pressSequentially(' gameplay');
+  await youtube.waitForTimeout(200);
+  assert.equal(await search.inputValue(),'GTA VI gameplay'); assert.equal(await search.isVisible(),true);
+  assert.equal(await search.evaluate(input=>document.activeElement===input && !input.closest('[data-gb-blocked]')),true);
+  assert.equal(await youtube.locator('#test-suggestions').isVisible(),true);
+  assert.equal(await youtube.locator('#test-suggestions [data-gb-blocked]').count(),0);
+  await youtube.locator('#recommended ytd-thumbnail [data-gb-preview-overlay]').waitFor();
+  ok('YouTube: pesquisa com GTA VI mantém campo, foco e sugestões livres, com cards ainda protegidos');
   assert.deepEqual(errors,[]); ok('Nenhum erro JavaScript nas páginas e interfaces testadas');
   await context.close(); context = await launch(); worker = context.serviceWorkers()[0] || await context.waitForEvent('serviceworker');
   assert.ok(await worker.evaluate(async () => (await GB.load()).keywords.some(t=>t.text==='termo secreto editado'))); ok('Preferências preservadas depois de reiniciar o navegador');

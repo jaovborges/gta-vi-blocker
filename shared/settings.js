@@ -1,6 +1,6 @@
 (() => {
   const G = globalThis.GB;
-  G.defaultSettings = () => ({ version: G.VERSION, enabled: true, pauseUntil: 0, sensitivity: 'smart', display: 'notice', pageGuard: true, videoGuard: true, videoWarnings: true, autoplay: true, videoReveal: true, languages: Object.keys(G.LANGUAGES), allowedSites: [], keywords: G.defaults() });
+  G.defaultSettings = () => ({ version: G.VERSION, siteDefaultsVersion: G.SITE_DEFAULTS_VERSION, enabled: true, pauseUntil: 0, sensitivity: 'smart', display: 'notice', pageGuard: true, videoGuard: true, videoWarnings: true, autoplay: true, videoReveal: true, languages: Object.keys(G.LANGUAGES), allowedSites: [{ domain: 'github.com', subdomains: true }], keywords: G.defaults() });
   G.validateSettings = input => {
     const d = G.defaultSettings();
     if (!input || typeof input !== 'object' || Array.isArray(input)) throw new Error('Configurações inválidas.');
@@ -14,6 +14,9 @@
       const domain = G.domain(r?.domain);
       return domain ? [{ domain, subdomains: r.subdomains === true }] : [];
     }).filter((r, i, a) => a.findIndex(x => x.domain === r.domain) === i);
+    // Apply new site defaults once, independently of keyword migrations. A
+    // later user removal must remain removed across saves and browser restarts.
+    if (!(Number.isInteger(input.siteDefaultsVersion) && input.siteDefaultsVersion >= G.SITE_DEFAULTS_VERSION) && !s.allowedSites.some(r => r.domain === 'github.com')) s.allowedSites.push({ domain: 'github.com', subdomains: true });
     if (Array.isArray(input.keywords)) {
       if (input.keywords.length > 10000) throw new Error('O limite é de 10.000 palavras-chave.');
       const seen = new Set(), ids = new Set();

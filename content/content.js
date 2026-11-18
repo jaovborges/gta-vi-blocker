@@ -9,7 +9,7 @@
     isActive() { return G.active(this.settings) && !G.isAllowed(location.hostname, this.settings.allowedSites) && !this.pageReleased; }
     count(category, video) { this.currentCount++; G.message({ type: 'BLOCK', category, video }); }
     inspect(element) {
-      if (!this.isActive() || element.closest(G.SKIP) || G.isYouTubePlaybackContent(element)) return;
+      if (!this.isActive() || element.closest(G.SKIP) || G.isYouTubeSearchUI(element) || G.isYouTubePlaybackContent(element)) return;
       const container = G.container(element);
       if (element.matches('video')) this.video.inspect(element);
       else if (container) for (const video of container.querySelectorAll('video')) this.video.inspect(video);

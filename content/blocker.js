@@ -35,7 +35,7 @@
       return false;
     }
     block(element, result, kind = 'content', onReveal) {
-      if (!element.isConnected) return;
+      if (!element.isConnected || element.closest(G.SKIP) || G.isYouTubeSearchUI(element)) return;
       if (this.isRevealed(element)) return;
       const existing = this.records.get(element);
       if (existing) {

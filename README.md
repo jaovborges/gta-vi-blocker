@@ -48,6 +48,10 @@ Depois de **Mostrar conteúdo** ou **Assistir mesmo assim**, atualizações de c
 
 Ao permitir um domínio pai com subdomínios, reativar a proteção pelo popup de um subdomínio remove a regra pai correspondente. Se desejar exceções mais específicas, cadastre domínios exatos na página de opções.
 
+**GitHub permitido por padrão:** `github.com` e seus subdomínios ficam livres para acessar o código, a documentação e as releases. A atualização adiciona essa exceção uma única vez às instalações antigas, sem apagar preferências. Ela pode ser removida em **Sites permitidos**; a remoção é respeitada nas próximas inicializações.
+
+**Pesquisa do YouTube:** o campo de busca, suas sugestões e os elementos da interface de pesquisa são excluídos da filtragem, inclusive ao digitar GTA VI. Os cards dos resultados e recomendações continuam protegidos.
+
 ## Estrutura
 
 ```text
@@ -81,9 +85,9 @@ npm run test:e2e
 npm run package
 ```
 
-O teste de integração inicia um perfil Chromium temporário e isolado com a extensão real carregada, usa uma página HTTP local e reinicia o navegador para conferir persistência. Capturas ficam em `test-results/`. O ZIP instalável fica em `dist/gta-vi-blocker-1.2.0.zip`, sem dependências de desenvolvimento. O workflow também disponibiliza esse ZIP como artefato.
+O teste de integração inicia um perfil Chromium temporário e isolado com a extensão real carregada, usa uma página HTTP local e reinicia o navegador para conferir persistência. Capturas ficam em `test-results/`. O ZIP instalável fica em `dist/gta-vi-blocker-1.2.1.zip`, sem dependências de desenvolvimento. O workflow também disponibiliza esse ZIP como artefato.
 
-Validação da versão 1.2.0: **85 testes automatizados e 23 verificações de integração passaram**. Veja [TESTING.md](TESTING.md) para ambiente, escopo, página pública verificada e limitações da validação.
+Validação da versão 1.2.1: **99 testes automatizados e 25 verificações de integração passaram**. Veja [TESTING.md](TESTING.md) para ambiente, escopo, página pública verificada e limitações da validação.
 
 Para regenerar os dicionários e o manifest/HTML após editar os respectivos geradores: `node scripts/dictionaries.mjs` e `node scripts/scaffold.mjs`. Os ícones podem ser regenerados no Windows com `powershell -File scripts/icons.ps1`.
 

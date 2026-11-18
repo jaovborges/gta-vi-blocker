@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "GTA VI Blocker",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "minimum_chrome_version": "120",
   "description": "Proteção local contra spoilers de GTA VI. Filtragem multilíngue, avisos de vídeo e controle por site.",
   "permissions": [
